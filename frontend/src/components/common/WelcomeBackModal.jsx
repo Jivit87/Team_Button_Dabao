@@ -1,172 +1,97 @@
-import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { userProfile, learnerMetrics, courseModules, momentumData, accountabilityBuddy } from '../../data/dummyData';
+import { X, BookOpen, Flame, Play } from 'lucide-react';
+import { courseModules, momentumData } from '../../data/dummyData';
 
 /**
- * WelcomeBackModal - Context summary for returning learners
- * Shows key info to help users remember where they left off
+ * WelcomeBackModal - Return context summary (Udemy Style)
  */
-const WelcomeBackModal = ({ isOpen, onClose, daysSinceLastVisit = 3 }) => {
-  const currentModule = courseModules.find(m => m.isCurrentModule);
-  const completedModules = courseModules.filter(m => m.status === 'completed');
-  
-  // Calculate what happened since last visit
-  const summaryPoints = [
-    {
-      icon: '📍',
-      title: 'Where You Left Off',
-      description: `Module ${currentModule?.id}: ${currentModule?.title}`,
-      detail: `${currentModule?.progress}% complete`,
-      action: currentModule ? `/module/${currentModule.id}` : null,
-      actionLabel: 'Continue',
-    },
-    {
-      icon: '🔥',
-      title: 'Your Streak Status',
-      description: momentumData.currentStreak > 0 
-        ? `${momentumData.currentStreak}-day streak still active!` 
-        : `Your streak ended, but you can start fresh today!`,
-      detail: momentumData.currentStreak > 0 
-        ? 'Complete today to keep it going!'
-        : 'Every journey begins with a single step',
-      highlight: momentumData.currentStreak > 0 ? 'success' : 'warning',
-    },
-    {
-      icon: '📊',
-      title: 'Your Progress',
-      description: `${learnerMetrics.overallProgress}% course complete`,
-      detail: `${completedModules.length}/${courseModules.length} modules done • Level ${learnerMetrics.level}`,
-    },
-    {
-      icon: '👥',
-      title: 'Your Study Buddy',
-      description: accountabilityBuddy?.name || 'No buddy yet',
-      detail: accountabilityBuddy?.isOnline ? '🟢 Online now' : 'Check in on them!',
-      action: '/community',
-      actionLabel: 'Say Hi',
-    },
-  ];
+const WelcomeBackModal = ({ isOpen, onClose, daysSinceLastVisit }) => {
+  const currentModule = courseModules.find((m) => m.isCurrentModule);
 
-  // Quick suggestion based on context
-  const getQuickSuggestion = () => {
-    if (daysSinceLastVisit >= 7) {
-      return "It's been a while! Start with a quick 5-min refresher to get back in the groove.";
-    } else if (daysSinceLastVisit >= 3) {
-      return "Welcome back! Pick up where you left off - you were making great progress.";
-    } else {
-      return "Good to see you again! Ready to continue your learning journey?";
-    }
-  };
+  if (!isOpen) return null;
 
   return (
     <AnimatePresence>
-      {isOpen && (
-        <>
-          {/* Overlay */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-dark-500/90 backdrop-blur-md z-50"
-            onClick={onClose}
-          />
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      >
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
-          {/* Modal */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          >
-            <div className="glass-dark border border-white/20 rounded-3xl p-8 max-w-lg w-full shadow-2xl max-h-[90vh] overflow-y-auto">
-              {/* Header */}
-              <div className="text-center mb-6">
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.2, type: 'spring' }}
-                  className="text-5xl mb-3"
-                >
-                  👋
-                </motion.div>
-                <h2 className="text-2xl font-black text-neutral-100 mb-2">
-                  Welcome back, {userProfile.name}!
-                </h2>
-                <p className="text-neutral-400 text-sm">
-                  {getQuickSuggestion()}
-                </p>
-              </div>
+        {/* Modal */}
+        <motion.div
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.95, opacity: 0 }}
+          className="relative bg-white rounded-lg border border-[#E5E5E5] w-full max-w-lg overflow-hidden shadow-elevated"
+        >
+          {/* Header */}
+          <div className="bg-charcoal p-6 text-white">
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <h2 className="text-xl font-bold mb-1">Welcome back!</h2>
+            <p className="text-white/70 text-sm">
+              It's been {daysSinceLastVisit} day{daysSinceLastVisit > 1 ? 's' : ''}. Here's what you missed.
+            </p>
+          </div>
 
-              {/* Summary Points */}
-              <div className="space-y-3 mb-6">
-                {summaryPoints.map((point, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.1 + index * 0.1 }}
-                    className={`p-4 rounded-xl border transition-all ${
-                      point.highlight === 'success' 
-                        ? 'bg-success-500/10 border-success-500/30'
-                        : point.highlight === 'warning'
-                        ? 'bg-warning-500/10 border-warning-500/30'
-                        : 'bg-white/5 border-white/10'
-                    }`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <span className="text-2xl">{point.icon}</span>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-neutral-200 text-sm">{point.title}</h4>
-                        <p className="text-neutral-100 font-medium">{point.description}</p>
-                        <p className="text-xs text-neutral-500 mt-0.5">{point.detail}</p>
-                      </div>
-                      {point.action && (
-                        <Link
-                          to={point.action}
-                          onClick={onClose}
-                          className="btn-ghost btn-sm text-xs"
-                        >
-                          {point.actionLabel} →
-                        </Link>
-                      )}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Today's Goal Reminder */}
-              <div className="p-4 bg-gradient-to-r from-accent-purple/20 to-accent-pink/20 border border-accent-purple/30 rounded-xl mb-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-lg">🎯</span>
-                  <span className="font-bold text-accent-purple">Today's Goal</span>
+          {/* Content */}
+          <div className="p-6 space-y-4">
+            {/* Current Module */}
+            {currentModule && (
+              <div className="p-4 bg-[#F9F9F9] rounded border border-[#E5E5E5]">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded bg-primary-100 flex items-center justify-center">
+                    <BookOpen className="w-5 h-5 text-primary-500" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs text-[#6B7280]">Continue where you left off</p>
+                    <h4 className="font-semibold text-[#000000]">{currentModule.title}</h4>
+                    <p className="text-sm text-[#6B7280]">{currentModule.progress}% complete</p>
+                  </div>
                 </div>
-                <p className="text-neutral-200 text-sm">
-                  Just <strong>8 minutes</strong> to complete your daily mission and keep building momentum!
-                </p>
               </div>
+            )}
 
-              {/* Actions */}
-              <div className="flex gap-3">
-                <button
-                  onClick={onClose}
-                  className="btn-secondary flex-1"
-                >
-                  Explore Dashboard
-                </button>
-                <Link
-                  to={currentModule ? `/module/${currentModule.id}` : '/'}
-                  onClick={onClose}
-                  className="btn-glow flex-1 text-center"
-                >
-                  <span className="mr-2">▶</span>
-                  Continue Learning
-                </Link>
+            {/* Streak */}
+            <div className="p-4 bg-accent-50 rounded border border-accent-200">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded bg-accent-100 flex items-center justify-center">
+                  <Flame className="w-5 h-5 text-accent-600" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs text-[#6B7280]">Your streak status</p>
+                  <h4 className="font-semibold text-[#000000]">
+                    {momentumData.currentStreak > 0
+                      ? `${momentumData.currentStreak}-day streak active!`
+                      : 'Start a new streak today!'}
+                  </h4>
+                </div>
               </div>
             </div>
-          </motion.div>
-        </>
-      )}
+
+            {/* Quick Tip */}
+            <div className="text-center text-sm text-[#6B7280]">
+              Just 10 minutes today keeps your momentum going.
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="p-6 pt-0">
+            <button onClick={onClose} className="btn-primary w-full">
+              <Play className="w-4 h-4" />
+              Continue Learning
+            </button>
+          </div>
+        </motion.div>
+      </motion.div>
     </AnimatePresence>
   );
 };

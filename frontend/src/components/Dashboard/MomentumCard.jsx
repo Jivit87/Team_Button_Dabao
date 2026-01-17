@@ -1,129 +1,74 @@
 import { motion } from 'framer-motion';
-import { momentumData, userProfile } from '../../data/dummyData';
+import { Flame, Target, TrendingUp, Calendar } from 'lucide-react';
+import { momentumData, learnerMetrics } from '../../data/dummyData';
 
-/**
- * MomentumCard - Real-time momentum visualization
- * Shows streak, consistency score, and encouragement
- */
 const MomentumCard = () => {
-  const { currentStreak, bestStreak, momentumScore, weeklyProgress, weeklyGoal } = momentumData;
-  
-  // Calculate ring progress (0-100)
-  const ringProgress = (weeklyProgress / weeklyGoal) * 100;
-  const circumference = 2 * Math.PI * 45; // radius = 45
-  const strokeDashoffset = circumference - (ringProgress / 100) * circumference;
+  const { currentStreak, consistencyScore, weeklyProgress } = momentumData;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="card-glow"
-    >
+    <div className="card">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-bold text-neutral-100">Your Momentum</h3>
-        <span className="badge-fire flex items-center gap-1">
-          <span className="fire-icon">🔥</span>
-          <span>{currentStreak} day streak</span>
-        </span>
+        <div>
+          <h3 className="font-bold text-u-black">Your Momentum</h3>
+          <p className="text-sm text-u-muted">Keep building consistency</p>
+        </div>
+        <span className="badge-accent">This Week</span>
       </div>
 
       <div className="flex items-center gap-8">
-        {/* Momentum Ring */}
-        <div className="relative">
-          <svg className="w-28 h-28 transform -rotate-90">
-            {/* Background ring */}
-            <circle
-              cx="56"
-              cy="56"
-              r="45"
-              stroke="currentColor"
-              strokeWidth="8"
-              fill="none"
-              className="text-dark-300"
-            />
-            {/* Progress ring */}
+        <div className="relative flex-shrink-0">
+          <svg className="w-24 h-24 -rotate-90">
+            <circle cx="48" cy="48" r="40" stroke="#E5E5E5" strokeWidth="8" fill="none" />
             <motion.circle
-              cx="56"
-              cy="56"
-              r="45"
-              stroke="url(#gradient)"
-              strokeWidth="8"
-              fill="none"
-              strokeLinecap="round"
-              initial={{ strokeDashoffset: circumference }}
-              animate={{ strokeDashoffset }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
-              style={{ strokeDasharray: circumference }}
+              cx="48" cy="48" r="40" stroke="#EC5252" strokeWidth="8"
+              fill="none" strokeLinecap="round"
+              initial={{ strokeDashoffset: 251 }}
+              animate={{ strokeDashoffset: 251 - (consistencyScore / 100) * 251 }}
+              transition={{ duration: 1, ease: 'easeOut' }}
+              style={{ strokeDasharray: 251 }}
             />
-            <defs>
-              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%">
-                <stop offset="0%" stopColor="#a855f7" />
-                <stop offset="50%" stopColor="#ec4899" />
-                <stop offset="100%" stopColor="#f97316" />
-              </linearGradient>
-            </defs>
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-3xl font-black text-gradient">{momentumScore}</span>
-            <span className="text-xs text-neutral-400">Score</span>
+            <span className="text-2xl font-bold text-u-black">{consistencyScore}%</span>
+            <span className="text-xs text-u-muted">Score</span>
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="flex-1 space-y-4">
-          {/* Weekly Progress */}
-          <div>
-            <div className="flex items-center justify-between text-sm mb-1">
-              <span className="text-neutral-400">Weekly Goal</span>
-              <span className="text-neutral-200 font-medium">{weeklyProgress}/{weeklyGoal} days</span>
+        <div className="flex-1 grid grid-cols-2 gap-4">
+          <div className="p-3 bg-accent-50 rounded border border-accent-200">
+            <div className="flex items-center gap-2 mb-1">
+              <Flame className="w-4 h-4 text-accent-600" />
+              <span className="text-xs text-u-muted">Streak</span>
             </div>
-            <div className="progress-bar">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${ringProgress}%` }}
-                transition={{ duration: 1, delay: 0.5 }}
-                className="progress-bar-gradient"
-              />
-            </div>
+            <p className="text-xl font-bold text-u-black">{currentStreak} days</p>
           </div>
 
-          {/* Streak comparison */}
-          <div className="flex items-center gap-4 text-sm">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-accent-orange/20 flex items-center justify-center">
-                <span className="text-lg">🔥</span>
-              </div>
-              <div>
-                <p className="text-neutral-400 text-xs">Current</p>
-                <p className="text-neutral-100 font-bold">{currentStreak} days</p>
-              </div>
+          <div className="p-3 bg-primary-50 rounded border border-primary-200">
+            <div className="flex items-center gap-2 mb-1">
+              <Target className="w-4 h-4 text-primary-500" />
+              <span className="text-xs text-u-muted">Weekly Goal</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-accent-purple/20 flex items-center justify-center">
-                <span className="text-lg">🏆</span>
-              </div>
-              <div>
-                <p className="text-neutral-400 text-xs">Best</p>
-                <p className="text-neutral-100 font-bold">{bestStreak} days</p>
-              </div>
-            </div>
+            <p className="text-xl font-bold text-u-black">{weeklyProgress}/5 days</p>
           </div>
 
-          {/* Encouragement */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-            className="text-sm text-success-400 font-medium"
-          >
-            {currentStreak >= bestStreak - 2 
-              ? `🎯 ${bestStreak - currentStreak + 1} more days to beat your record!`
-              : `💪 You're building great momentum, ${userProfile.name}!`
-            }
-          </motion.p>
+          <div className="p-3 bg-success-50 rounded border border-success-100">
+            <div className="flex items-center gap-2 mb-1">
+              <TrendingUp className="w-4 h-4 text-success-600" />
+              <span className="text-xs text-u-muted">Level</span>
+            </div>
+            <p className="text-xl font-bold text-u-black">{learnerMetrics.level}</p>
+          </div>
+
+          <div className="p-3 bg-u-bg rounded border border-u-border">
+            <div className="flex items-center gap-2 mb-1">
+              <Calendar className="w-4 h-4 text-u-muted" />
+              <span className="text-xs text-u-muted">Best Streak</span>
+            </div>
+            <p className="text-xl font-bold text-u-black">{momentumData.bestStreak} days</p>
+          </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

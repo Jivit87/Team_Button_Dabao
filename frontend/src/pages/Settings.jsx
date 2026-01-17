@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { userProfile } from '../data/dummyData';
+import { Play, Pause, AlertTriangle, Download, Trash2, Bell, Clock, Calendar } from 'lucide-react';
 
 /**
- * Settings - Profile and preferences page
+ * Settings - Profile and preferences page (Udemy Style)
  * Allows goal editing, schedule preferences, and course pause/resume
  */
 const Settings = () => {
@@ -60,8 +61,8 @@ const Settings = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h1 className="text-2xl font-bold text-neutral-800">Settings</h1>
-        <p className="text-neutral-500 mt-1">Manage your profile and preferences</p>
+        <h1 className="text-2xl font-bold text-u-black">Settings</h1>
+        <p className="text-u-muted mt-1">Manage your profile and preferences</p>
       </motion.div>
 
       {/* Profile Section */}
@@ -71,11 +72,11 @@ const Settings = () => {
         transition={{ delay: 0.1 }}
         className="card"
       >
-        <h2 className="text-lg font-semibold text-neutral-800 mb-4">Profile Information</h2>
+        <h2 className="text-lg font-semibold text-u-black mb-4">Profile Information</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-1">Name</label>
+            <label className="block text-sm font-medium text-u-gray mb-1">Name</label>
             <input
               type="text"
               value={profile.name}
@@ -84,7 +85,7 @@ const Settings = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-1">Email</label>
+            <label className="block text-sm font-medium text-u-gray mb-1">Email</label>
             <input
               type="email"
               value={profile.email}
@@ -93,7 +94,7 @@ const Settings = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-1">Location</label>
+            <label className="block text-sm font-medium text-u-gray mb-1">Location</label>
             <input
               type="text"
               value={profile.location}
@@ -102,7 +103,7 @@ const Settings = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-1">Timezone</label>
+            <label className="block text-sm font-medium text-u-gray mb-1">Timezone</label>
             <select
               value={profile.timezone}
               onChange={(e) => handleProfileChange('timezone', e.target.value)}
@@ -117,7 +118,7 @@ const Settings = () => {
         </div>
 
         <div className="mt-4">
-          <label className="block text-sm font-medium text-neutral-700 mb-1">Learning Goal</label>
+          <label className="block text-sm font-medium text-u-gray mb-1">Learning Goal</label>
           <textarea
             value={profile.goal}
             onChange={(e) => handleProfileChange('goal', e.target.value)}
@@ -127,7 +128,7 @@ const Settings = () => {
         </div>
 
         <div className="mt-4">
-          <button onClick={handleSaveProfile} className="btn btn-primary">
+          <button onClick={handleSaveProfile} className="btn-primary">
             Save Changes
           </button>
         </div>
@@ -140,11 +141,11 @@ const Settings = () => {
         transition={{ delay: 0.2 }}
         className="card"
       >
-        <h2 className="text-lg font-semibold text-neutral-800 mb-4">Study Schedule</h2>
+        <h2 className="text-lg font-semibold text-u-black mb-4">Study Schedule</h2>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-2">
+            <label className="block text-sm font-medium text-u-gray mb-2">
               Preferred Study Days
             </label>
             <div className="flex flex-wrap gap-2">
@@ -161,8 +162,8 @@ const Settings = () => {
                   }}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
                     schedule.preferredDays.includes(day)
-                      ? 'bg-primary-500 text-white'
-                      : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                      ? 'bg-u-charcoal text-white'
+                      : 'bg-u-bg text-u-muted hover:bg-u-border'
                   }`}
                 >
                   {day}
@@ -172,7 +173,7 @@ const Settings = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-2">
+            <label className="block text-sm font-medium text-u-gray mb-2">
               Preferred Time
             </label>
             <div className="flex gap-2">
@@ -187,7 +188,7 @@ const Settings = () => {
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                     schedule.preferredTime === time.value
                       ? 'bg-primary-500 text-white'
-                      : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                      : 'bg-u-bg text-u-muted hover:bg-u-border'
                   }`}
                 >
                   {time.label}
@@ -197,7 +198,7 @@ const Settings = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-2">
+            <label className="block text-sm font-medium text-u-gray mb-2">
               Daily Study Goal: {schedule.dailyGoal} minutes
             </label>
             <input
@@ -209,9 +210,9 @@ const Settings = () => {
               onChange={(e) =>
                 setSchedule((prev) => ({ ...prev, dailyGoal: parseInt(e.target.value) }))
               }
-              className="w-full h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-primary-500"
+              className="w-full h-2 bg-u-border rounded-lg appearance-none cursor-pointer accent-primary-500"
             />
-            <div className="flex justify-between text-xs text-neutral-400 mt-1">
+            <div className="flex justify-between text-xs text-u-muted mt-1">
               <span>10 min</span>
               <span>60 min</span>
             </div>
@@ -226,7 +227,7 @@ const Settings = () => {
         transition={{ delay: 0.3 }}
         className="card"
       >
-        <h2 className="text-lg font-semibold text-neutral-800 mb-4">Notifications</h2>
+        <h2 className="text-lg font-semibold text-u-black mb-4">Notifications</h2>
 
         <div className="space-y-3">
           {[
@@ -238,16 +239,16 @@ const Settings = () => {
           ].map((item) => (
             <label
               key={item.key}
-              className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg cursor-pointer hover:bg-neutral-100"
+              className="flex items-center justify-between p-3 bg-u-bg rounded-lg cursor-pointer hover:bg-u-border/50 border border-u-border"
             >
               <div>
-                <p className="font-medium text-neutral-700">{item.label}</p>
-                <p className="text-sm text-neutral-500">{item.desc}</p>
+                <p className="font-medium text-u-black">{item.label}</p>
+                <p className="text-sm text-u-muted">{item.desc}</p>
               </div>
               <div
                 onClick={() => handlePreferenceToggle(item.key)}
                 className={`w-11 h-6 rounded-full transition-colors cursor-pointer ${
-                  preferences[item.key] ? 'bg-primary-500' : 'bg-neutral-300'
+                  preferences[item.key] ? 'bg-success-500' : 'bg-u-muted'
                 }`}
               >
                 <div
@@ -266,10 +267,10 @@ const Settings = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className={`card border-2 ${isPaused ? 'border-warning-300 bg-warning-50' : 'border-neutral-200'}`}
+        className={`card border-2 ${isPaused ? 'border-accent-200 bg-accent-50' : 'border-u-border'}`}
       >
-        <h2 className="text-lg font-semibold text-neutral-800 mb-2">Course Status</h2>
-        <p className="text-neutral-600 mb-4">
+        <h2 className="text-lg font-semibold text-u-black mb-2">Course Status</h2>
+        <p className="text-u-gray mb-4">
           {isPaused
             ? "Your course is currently paused. We'll send you gentle reminders to come back."
             : 'Need a break? You can pause your course and resume anytime.'}
@@ -277,28 +278,23 @@ const Settings = () => {
 
         <button
           onClick={handlePauseToggle}
-          className={`btn ${isPaused ? 'btn-success' : 'btn-warning'}`}
+          className={`btn ${isPaused ? 'btn-primary bg-success-500 hover:bg-success-600 border-none' : 'btn-outline border-u-charcoal text-u-charcoal hover:bg-u-charcoal'}`}
         >
           {isPaused ? (
             <>
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+              <Play className="w-4 h-4 mr-2" />
               Resume Course
             </>
           ) : (
             <>
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+              <Pause className="w-4 h-4 mr-2" />
               Pause Course
             </>
           )}
         </button>
 
         {isPaused && (
-          <p className="text-sm text-warning-700 mt-3">
+          <p className="text-sm text-accent-700 mt-3 pt-3 border-t border-accent-200">
             💡 Taking breaks is healthy! We've seen learners return stronger after rest.
           </p>
         )}
@@ -309,17 +305,22 @@ const Settings = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="card border-2 border-alert-200"
+        className="card border-2 border-primary-200"
       >
-        <h2 className="text-lg font-semibold text-alert-700 mb-2">Danger Zone</h2>
-        <p className="text-neutral-600 mb-4">
+        <h2 className="text-lg font-semibold text-primary-600 mb-2 flex items-center gap-2">
+          <AlertTriangle className="w-5 h-5" />
+          Danger Zone
+        </h2>
+        <p className="text-u-gray mb-4">
           These actions are permanent and cannot be undone.
         </p>
         <div className="flex gap-3">
-          <button className="btn bg-neutral-100 text-neutral-700 hover:bg-neutral-200">
+          <button className="btn bg-u-bg text-u-gray border border-u-border hover:bg-u-border">
+            <Download className="w-4 h-4 mr-2" />
             Export My Data
           </button>
-          <button className="btn bg-alert-100 text-alert-700 hover:bg-alert-200">
+          <button className="btn bg-primary-50 text-primary-600 hover:bg-primary-100 border border-primary-200">
+            <Trash2 className="w-4 h-4 mr-2" />
             Delete Account
           </button>
         </div>

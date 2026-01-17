@@ -1,138 +1,124 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Star, X } from 'lucide-react';
 
 /**
- * CelebrationOverlay - Full-screen celebration for achievements
+ * CelebrationOverlay - Achievement celebration (Udemy Style)
  */
 const CelebrationOverlay = ({ isVisible, onClose, achievement }) => {
   const [confetti, setConfetti] = useState([]);
 
   useEffect(() => {
     if (isVisible) {
-      // Generate confetti pieces
-      const pieces = Array.from({ length: 50 }, (_, i) => ({
+      const newConfetti = Array.from({ length: 50 }, (_, i) => ({
         id: i,
-        left: Math.random() * 100,
+        x: Math.random() * 100,
         delay: Math.random() * 0.5,
-        color: ['#a855f7', '#ec4899', '#f97316', '#10b981', '#3b82f6'][Math.floor(Math.random() * 5)],
-        rotation: Math.random() * 360,
+        duration: 2 + Math.random() * 2,
+        color: ['#EC5252', '#FFB81C', '#10B981', '#1F1F1F'][Math.floor(Math.random() * 4)],
       }));
-      setConfetti(pieces);
-
-      // Auto close after delay
-      const timer = setTimeout(() => {
-        onClose?.();
-      }, 4000);
-
-      return () => clearTimeout(timer);
+      setConfetti(newConfetti);
     }
-  }, [isVisible, onClose]);
+  }, [isVisible]);
+
+  if (!isVisible) return null;
 
   return (
     <AnimatePresence>
-      {isVisible && (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center"
+      >
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+
+        {/* Confetti */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {confetti.map((c) => (
+            <motion.div
+              key={c.id}
+              initial={{ y: -20, x: `${c.x}vw`, opacity: 1, rotation: 0 }}
+              animate={{ y: '100vh', opacity: 0, rotation: 360 }}
+              transition={{ duration: c.duration, delay: c.delay, ease: 'easeOut' }}
+              className="absolute w-3 h-3 rounded"
+              style={{ backgroundColor: c.color }}
+            />
+          ))}
+        </div>
+
+        {/* Card */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="celebration-overlay"
-          onClick={onClose}
+          initial={{ scale: 0.8, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.8, opacity: 0, y: 20 }}
+          transition={{ type: 'spring', duration: 0.5 }}
+          className="relative z-10 bg-white rounded-lg border border-u-border p-8 text-center max-w-md mx-4 shadow-xl"
         >
-          {/* Confetti */}
-          <div className="confetti-container">
-            {confetti.map((piece) => (
-              <motion.div
-                key={piece.id}
-                initial={{ 
-                  y: -20, 
-                  x: `${piece.left}vw`, 
-                  rotate: 0,
-                  opacity: 1 
-                }}
-                animate={{ 
-                  y: '100vh', 
-                  rotate: piece.rotation + 720,
-                  opacity: 0 
-                }}
-                transition={{ 
-                  duration: 3 + Math.random() * 2, 
-                  delay: piece.delay,
-                  ease: 'easeOut'
-                }}
-                className="confetti-piece"
-                style={{ backgroundColor: piece.color, left: 0 }}
-              />
-            ))}
-          </div>
-
-          {/* Achievement Card */}
-          <motion.div
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.5, opacity: 0 }}
-            transition={{ type: 'spring', damping: 15 }}
-            className="achievement-card max-w-md mx-auto"
+          {/* Close */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 p-2 hover:bg-u-bg rounded transition-colors"
           >
-            {/* Glow effect */}
-            <div className="absolute -inset-4 bg-gradient-to-r from-accent-purple/20 via-accent-pink/20 to-accent-orange/20 rounded-3xl blur-xl" />
-            
-            <div className="relative">
-              {/* Icon */}
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2, type: 'spring', damping: 10 }}
-                className="text-6xl mb-4"
-              >
-                {achievement?.icon || '🎉'}
-              </motion.div>
+            <X className="w-5 h-5 text-u-muted" />
+          </button>
 
-              {/* Title */}
-              <motion.h2
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.3 }}
-                className="text-3xl font-black text-gradient mb-2"
-              >
-                {achievement?.title || 'Achievement Unlocked!'}
-              </motion.h2>
-
-              {/* Description */}
-              <motion.p
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="text-neutral-300 text-lg mb-6"
-              >
-                {achievement?.description || 'You did something amazing!'}
-              </motion.p>
-
-              {/* Reward */}
-              {achievement?.reward && (
-                <motion.div
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.5 }}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-success-500/20 border border-success-500/30 rounded-full text-success-400 font-bold"
-                >
-                  <span>+{achievement.reward}</span>
-                  <span>XP Earned!</span>
-                </motion.div>
-              )}
-
-              {/* Close hint */}
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1 }}
-                className="text-neutral-500 text-sm mt-6"
-              >
-                Tap anywhere to continue
-              </motion.p>
-            </div>
+          {/* Icon */}
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.3, type: 'spring' }}
+            className="w-20 h-20 mx-auto mb-6 rounded-full bg-accent-100 flex items-center justify-center"
+          >
+            {achievement?.icon || <Star className="w-10 h-10 text-accent-600" />}
           </motion.div>
+
+          {/* Title */}
+          <motion.h2
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="text-2xl font-bold text-u-black mb-2"
+          >
+            {achievement?.title}
+          </motion.h2>
+
+          {/* Description */}
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="text-u-gray mb-6"
+          >
+            {achievement?.description}
+          </motion.p>
+
+          {/* Reward */}
+          {achievement?.reward && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.6 }}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-accent-100 rounded-full mb-6"
+            >
+              <Star className="w-5 h-5 text-accent-600" />
+              <span className="font-bold text-accent-700">+{achievement.reward} XP</span>
+            </motion.div>
+          )}
+
+          {/* Button */}
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            onClick={onClose}
+            className="btn-primary w-full"
+          >
+            Continue Learning
+          </motion.button>
         </motion.div>
-      )}
+      </motion.div>
     </AnimatePresence>
   );
 };

@@ -1,38 +1,18 @@
 import { motion } from 'framer-motion';
+import { Video, HelpCircle, Code, FolderOpen, Check, ChevronRight } from 'lucide-react';
 
 /**
- * BiteSelector - Content selection for module learning (Dark Theme)
+ * BiteSelector - Content selection for module learning
+ * Nielsen's Heuristic #6: Recognition rather than recall
  */
 const BiteSelector = ({ items, selectedItem, onSelect }) => {
   const getTypeIcon = (type) => {
     switch (type) {
-      case 'video':
-        return (
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        );
-      case 'quiz':
-        return (
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        );
-      case 'exercise':
-        return (
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-          </svg>
-        );
-      case 'project':
-        return (
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-          </svg>
-        );
-      default:
-        return null;
+      case 'video': return Video;
+      case 'quiz': return HelpCircle;
+      case 'exercise': return Code;
+      case 'project': return FolderOpen;
+      default: return Video;
     }
   };
 
@@ -42,6 +22,7 @@ const BiteSelector = ({ items, selectedItem, onSelect }) => {
         const isSelected = selectedItem?.id === item.id;
         const isCompleted = item.completed;
         const isCurrent = item.isCurrent;
+        const Icon = getTypeIcon(item.type);
 
         return (
           <motion.button
@@ -52,21 +33,19 @@ const BiteSelector = ({ items, selectedItem, onSelect }) => {
             onClick={() => onSelect(item)}
             className={`relative p-4 rounded-xl text-left transition-all ${
               isSelected
-                ? 'bg-accent-purple/20 border-2 border-accent-purple shadow-glow-purple'
+                ? 'bg-primary-50 border-2 border-primary-500 shadow-card'
                 : isCompleted
-                ? 'bg-success-500/10 border border-success-500/30 hover:border-success-500/50'
+                ? 'bg-success-50 border border-success-200 hover:border-success-300'
                 : isCurrent
-                ? 'bg-accent-purple/10 border-2 border-accent-purple/50 animate-pulse'
-                : 'bg-white/5 border border-white/10 hover:border-accent-purple/30 hover:bg-white/10'
+                ? 'bg-primary-50 border-2 border-primary-300'
+                : 'bg-white border border-u-border hover:border-primary-200 hover:bg-u-bg'
             }`}
           >
             {/* Completed checkmark */}
             {isCompleted && (
               <div className="absolute top-2 right-2">
                 <div className="w-5 h-5 rounded-full bg-success-500 flex items-center justify-center">
-                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
+                  <Check className="w-3 h-3 text-white" />
                 </div>
               </div>
             )}
@@ -74,26 +53,32 @@ const BiteSelector = ({ items, selectedItem, onSelect }) => {
             {/* Content */}
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 ${
               isCompleted
-                ? 'bg-success-500/20 text-success-400'
+                ? 'bg-success-100'
                 : isCurrent
-                ? 'bg-accent-purple/30 text-accent-purple'
-                : 'bg-white/10 text-neutral-400'
+                ? 'bg-primary-100'
+                : 'bg-u-bg'
             }`}>
-              {getTypeIcon(item.type)}
+              <Icon className={`w-5 h-5 ${
+                isCompleted
+                  ? 'text-success-600'
+                  : isCurrent
+                  ? 'text-primary-600'
+                  : 'text-u-muted'
+              }`} />
             </div>
 
             <h4 className={`font-medium text-sm mb-1 line-clamp-2 ${
-              isCompleted ? 'text-success-400' : 'text-neutral-200'
+              isCompleted ? 'text-success-700' : 'text-u-black'
             }`}>
               {item.title}
             </h4>
 
-            <div className="flex items-center gap-2 text-xs text-neutral-500">
+            <div className="flex items-center gap-2 text-xs text-u-muted">
               <span>{item.duration} min</span>
               {item.xp && (
                 <>
                   <span>•</span>
-                  <span className="text-accent-purple">+{item.xp} XP</span>
+                  <span className="text-primary-500 font-medium">+{item.xp} XP</span>
                 </>
               )}
             </div>
@@ -101,7 +86,9 @@ const BiteSelector = ({ items, selectedItem, onSelect }) => {
             {/* Current indicator */}
             {isCurrent && !isCompleted && (
               <div className="absolute bottom-2 right-2">
-                <span className="badge-info text-xs">Next</span>
+                <span className="badge-primary text-xs">
+                  <ChevronRight className="w-3 h-3" /> Next
+                </span>
               </div>
             )}
           </motion.button>
